@@ -1,0 +1,12 @@
+{
+  "name": "3D Character Content Creator",
+  "description": "Transform product images into animated 3D characters with AI-generated prompts and scripts for video content.",
+  "requestFramePermissions": [
+    "camera"
+  ],
+  "majorCapabilities": [
+    "Image Analysis",
+    "Creative Writing",
+    "AI Content Workflow"
+  ]
+}
