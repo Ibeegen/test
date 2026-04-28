@@ -1,39 +1,18 @@
 <!doctype html>
-<html lang="en">
+<html lang="vi">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-    <title>VeoGen 3.0: 3D AI Factory</title>
-    
-    <!-- PWA Primary Meta Tags -->
-    <meta name="theme-color" content="#1A1A1A" />
-    <meta name="description" content="AI-powered 3D character generator for products." />
-    <link rel="manifest" href="/manifest.json" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>MOC Atelier | Noi that va decor cao cap</title>
+    <meta
+      name="description"
+      content="MOC Atelier la website ban hang noi that va decor cao cap voi catalog ro rang, gio hang truc quan va trai nghiem mua sam chuyen nghiep."
+    />
+    <meta name="theme-color" content="#151b1d" />
     <link rel="icon" type="image/svg+xml" href="/icon.svg" />
-    
-    <!-- iOS / Apple Mobile Web App Meta Tags -->
-    <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
-    <meta name="apple-mobile-web-app-title" content="VeoGen" />
-    <link rel="apple-touch-icon" href="/icon.svg" />
-    
-    <!-- Android / Chrome Mobile Web App Meta Tags -->
-    <meta name="mobile-web-app-capable" content="yes" />
   </head>
   <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
-    
-    <!-- Service Worker Registration -->
-    <script>
-      if ('serviceWorker' in navigator) {
-        window.addEventListener('load', () => {
-          navigator.serviceWorker.register('/sw.js')
-            .then(reg => console.log('SW Registered!', reg))
-            .catch(err => console.log('SW Registration failed: ', err));
-        });
-      }
-    </script>
   </body>
 </html>
-
