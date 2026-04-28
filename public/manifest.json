@@ -1,7 +1,7 @@
 {
-  "name": "VeoGen 3.0: 3D AI Factory",
-  "short_name": "VeoGen",
-  "description": "Transform products into animated 3D characters with AI.",
+  "name": "MOC Atelier",
+  "short_name": "MOC Atelier",
+  "description": "Cua hang noi that va decor cao cap voi trai nghiem mua sam toi gian va sang trong.",
   "start_url": "/",
   "scope": "/",
   "display": "standalone",
