@@ -30,6 +30,13 @@ type CartItem = Product & {
   quantity: number;
 };
 
+type CheckoutForm = {
+  name: string;
+  phone: string;
+  address: string;
+  note: string;
+};
+
 const categories: Category[] = ['Tất cả', 'Phòng khách', 'Phòng ngủ', 'Trang trí'];
 
 const products: Product[] = [
@@ -110,6 +117,15 @@ export default function App() {
   const [selectedCategory, setSelectedCategory] = useState<Category>('Tất cả');
   const [cartOpen, setCartOpen] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
+  const [checkoutOpen, setCheckoutOpen] = useState(false);
+  const [orderPlaced, setOrderPlaced] = useState(false);
+  const [checkoutError, setCheckoutError] = useState('');
+  const [checkoutForm, setCheckoutForm] = useState<CheckoutForm>({
+    name: '',
+    phone: '',
+    address: '',
+    note: '',
+  });
   const [cartItems, setCartItems] = useState<CartItem[]>([
     {...products[0], quantity: 1},
   ]);
@@ -131,6 +147,7 @@ export default function App() {
 
   const addToCart = (product: Product) => {
     setCartOpen(true);
+    setCheckoutError('');
     setCartItems((current) => {
       const existing = current.find((item) => item.id === product.id);
       if (existing) {
@@ -150,6 +167,43 @@ export default function App() {
         )
         .filter((item) => item.quantity > 0),
     );
+  };
+
+  const openCheckout = () => {
+    if (cartItems.length === 0) {
+      setCheckoutError('Giỏ hàng đang trống, hãy chọn sản phẩm trước khi thanh toán.');
+      return;
+    }
+    setCheckoutError('');
+    setOrderPlaced(false);
+    setCheckoutOpen(true);
+  };
+
+  const closeCheckout = () => {
+    setCheckoutOpen(false);
+    setCheckoutError('');
+  };
+
+  const handleCheckoutFieldChange =
+    (field: keyof CheckoutForm) =>
+    (event: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+      setCheckoutForm((current) => ({
+        ...current,
+        [field]: event.target.value,
+      }));
+    };
+
+  const handleCheckoutSubmit = (event: React.FormEvent<HTMLFormElement>) => {
+    event.preventDefault();
+
+    if (!checkoutForm.name.trim() || !checkoutForm.phone.trim() || !checkoutForm.address.trim()) {
+      setCheckoutError('Vui lòng nhập đầy đủ họ tên, số điện thoại và địa chỉ giao hàng.');
+      return;
+    }
+
+    setCheckoutError('');
+    setOrderPlaced(true);
+    setCartItems([]);
   };
 
   return (
@@ -453,7 +507,9 @@ export default function App() {
           <div className="grid gap-10 md:grid-cols-[0.95fr_1.05fr] md:items-center">
             <div>
               <p className="section-kicker">Không gian sống</p>
-              <h2 className="section-title">Một website bán hàng chuyên nghiệp phải cho khách thấy món đồ sẽ sống trong nhà họ ra sao.</h2>
+              <h2 className="section-title">
+                Một website bán hàng chuyên nghiệp phải cho khách thấy món đồ sẽ sống trong nhà họ ra sao.
+              </h2>
               <p className="section-copy">
                 Vì vậy mỗi sản phẩm đều đi kèm ảnh ngữ cảnh thật, mô tả ngắn gọn và thông
                 tin đủ để ra quyết định nhanh: chất liệu, cảm giác sử dụng và phạm vi phù hợp.
@@ -633,12 +689,167 @@ export default function App() {
                   <span>Tổng cộng</span>
                   <span>{formatPrice(cartTotal)}</span>
                 </div>
-                <button className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-md bg-[var(--color-ink)] px-6 py-4 text-sm font-semibold text-white transition hover:bg-[var(--color-forest)]">
+                {checkoutError ? (
+                  <p className="mt-4 rounded-md bg-[#efe3d7] px-4 py-3 text-sm text-[var(--color-clay)]">
+                    {checkoutError}
+                  </p>
+                ) : null}
+                <button
+                  onClick={openCheckout}
+                  className="mt-5 inline-flex w-full items-center justify-center gap-3 rounded-md bg-[var(--color-ink)] px-6 py-4 text-sm font-semibold text-white transition hover:bg-[var(--color-forest)]"
+                >
                   Tiến hành thanh toán
                   <ArrowRight size={16} />
                 </button>
               </div>
             </motion.aside>
+          </>
+        )}
+      </AnimatePresence>
+
+      <AnimatePresence>
+        {checkoutOpen && (
+          <>
+            <motion.button
+              initial={{opacity: 0}}
+              animate={{opacity: 1}}
+              exit={{opacity: 0}}
+              className="fixed inset-0 z-[60] bg-[rgba(12,16,18,0.56)]"
+              onClick={closeCheckout}
+              aria-label="Đóng thanh toán"
+            />
+            <motion.div
+              initial={{opacity: 0, y: 24}}
+              animate={{opacity: 1, y: 0}}
+              exit={{opacity: 0, y: 24}}
+              className="fixed inset-x-4 top-[6vh] z-[70] mx-auto max-h-[88vh] w-full max-w-2xl overflow-y-auto rounded-md bg-white shadow-2xl md:inset-x-0"
+            >
+              <div className="flex items-center justify-between border-b border-[var(--color-line)] px-5 py-5 md:px-8">
+                <div>
+                  <p className="text-sm uppercase tracking-[0.3em] text-[var(--color-muted)]">
+                    Thanh toán
+                  </p>
+                  <h3 className="mt-1 font-serif text-4xl leading-none">Hoàn tất đơn hàng</h3>
+                </div>
+                <button
+                  onClick={closeCheckout}
+                  className="inline-flex h-11 w-11 items-center justify-center rounded-md bg-[var(--color-sand)]"
+                  aria-label="Đóng"
+                >
+                  <X size={18} />
+                </button>
+              </div>
+
+              {orderPlaced ? (
+                <div className="px-5 py-10 md:px-8">
+                  <div className="rounded-md bg-[var(--color-sand)] p-6">
+                    <p className="text-sm uppercase tracking-[0.3em] text-[var(--color-forest)]">
+                      Đặt hàng thành công
+                    </p>
+                    <h4 className="mt-3 text-2xl font-semibold tracking-tight">
+                      MOC Atelier đã nhận yêu cầu của bạn.
+                    </h4>
+                    <p className="mt-3 max-w-xl text-sm leading-7 text-[var(--color-muted)]">
+                      Đội ngũ tư vấn sẽ liên hệ xác nhận đơn, phí vận chuyển và thời gian lắp đặt
+                      trong vòng 30 phút làm việc.
+                    </p>
+                  </div>
+                  <button
+                    onClick={closeCheckout}
+                    className="mt-6 inline-flex items-center justify-center rounded-md bg-[var(--color-ink)] px-5 py-3 text-sm font-semibold text-white"
+                  >
+                    Đóng
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleCheckoutSubmit} className="grid gap-8 px-5 py-6 md:grid-cols-[1fr_0.9fr] md:px-8">
+                  <div className="space-y-4">
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold">Họ và tên</label>
+                      <input
+                        value={checkoutForm.name}
+                        onChange={handleCheckoutFieldChange('name')}
+                        className="w-full rounded-md border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-forest)]"
+                        placeholder="Nguyen Van A"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold">Số điện thoại</label>
+                      <input
+                        value={checkoutForm.phone}
+                        onChange={handleCheckoutFieldChange('phone')}
+                        className="w-full rounded-md border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-forest)]"
+                        placeholder="09xx xxx xxx"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold">Địa chỉ giao hàng</label>
+                      <textarea
+                        value={checkoutForm.address}
+                        onChange={handleCheckoutFieldChange('address')}
+                        className="min-h-28 w-full rounded-md border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-forest)]"
+                        placeholder="So nha, duong, quan/huyen, tinh/thanh"
+                      />
+                    </div>
+                    <div>
+                      <label className="mb-2 block text-sm font-semibold">Ghi chú</label>
+                      <textarea
+                        value={checkoutForm.note}
+                        onChange={handleCheckoutFieldChange('note')}
+                        className="min-h-24 w-full rounded-md border border-[var(--color-line)] bg-white px-4 py-3 outline-none transition focus:border-[var(--color-forest)]"
+                        placeholder="Khung gio giao hang, yeu cau lap dat..."
+                      />
+                    </div>
+                    {checkoutError ? (
+                      <p className="rounded-md bg-[#efe3d7] px-4 py-3 text-sm text-[var(--color-clay)]">
+                        {checkoutError}
+                      </p>
+                    ) : null}
+                  </div>
+
+                  <div className="rounded-md bg-[var(--color-sand)] p-5">
+                    <p className="text-sm uppercase tracking-[0.28em] text-[var(--color-muted)]">
+                      Tóm tắt đơn hàng
+                    </p>
+                    <div className="mt-5 space-y-4">
+                      {cartItems.map((item) => (
+                        <div key={item.id} className="flex items-start justify-between gap-4">
+                          <div>
+                            <p className="font-semibold">{item.name}</p>
+                            <p className="mt-1 text-sm text-[var(--color-muted)]">
+                              {item.quantity} x {formatPrice(item.price)}
+                            </p>
+                          </div>
+                          <p className="font-semibold">{formatPrice(item.price * item.quantity)}</p>
+                        </div>
+                      ))}
+                    </div>
+                    <div className="mt-6 border-t border-[var(--color-line)] pt-4">
+                      <div className="flex items-center justify-between text-sm text-[var(--color-muted)]">
+                        <span>Tạm tính</span>
+                        <span>{formatPrice(cartTotal)}</span>
+                      </div>
+                      <div className="mt-2 flex items-center justify-between text-sm text-[var(--color-muted)]">
+                        <span>Vận chuyển</span>
+                        <span>{cartTotal >= shippingThreshold ? 'Miễn phí' : 'Xác nhận sau'}</span>
+                      </div>
+                      <div className="mt-4 flex items-center justify-between text-lg font-semibold">
+                        <span>Tổng thanh toán</span>
+                        <span>{formatPrice(cartTotal)}</span>
+                      </div>
+                    </div>
+
+                    <button
+                      type="submit"
+                      className="mt-6 inline-flex w-full items-center justify-center gap-3 rounded-md bg-[var(--color-ink)] px-5 py-4 text-sm font-semibold text-white transition hover:bg-[var(--color-forest)]"
+                    >
+                      Xác nhận đặt hàng
+                      <ArrowRight size={16} />
+                    </button>
+                  </div>
+                </form>
+              )}
+            </motion.div>
           </>
         )}
       </AnimatePresence>
