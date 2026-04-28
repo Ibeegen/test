@@ -1,38 +1,88 @@
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;900&family=Playfair+Display:ital,wght@0,400;0,700;0,900;1,400;1,700;1,900&family=JetBrains+Mono:wght@400;500&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap');
 @import "tailwindcss";
 
 @theme {
-  --font-sans: "Inter", ui-sans-serif, system-ui, sans-serif;
-  --font-serif: "Playfair Display", ui-serif, Georgia, serif;
-  --font-mono: "JetBrains Mono", ui-monospace, SFMono-Regular, monospace;
+  --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+}
+
+:root {
+  --color-cream: #f5f0e8;
+  --color-sand: #e7ddcf;
+  --color-line: #d5cab9;
+  --color-ink: #151b1d;
+  --color-muted: #5f625c;
+  --color-clay: #b56a4f;
+  --color-forest: #30433b;
+  --color-gold: #b98b3f;
+  --color-gold-soft: #e7c995;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 @layer base {
+  * {
+    box-sizing: border-box;
+  }
+
   body {
-    @apply bg-[#F9F9F7] text-[#1a1a1a] overflow-x-hidden;
-    /* Prevent text selection on UI elements */
-    -webkit-tap-highlight-color: transparent;
-    height: 100dvh; /* Dynamic viewport height for modern browsers */
+    margin: 0;
+    min-width: 320px;
+    background:
+      radial-gradient(circle at top, rgba(255, 255, 255, 0.55), transparent 28%),
+      linear-gradient(180deg, #f6f1e9 0%, #f2ece4 100%);
+    color: var(--color-ink);
+    font-family: var(--font-sans);
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
   }
 
-  /* Ensure the main container grows correctly but hides overflows where needed */
+  img {
+    display: block;
+  }
+
+  button,
+  input,
+  textarea,
+  select {
+    font: inherit;
+  }
+
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+
   #root {
-    height: 100%;
+    min-height: 100vh;
   }
 }
 
-/* App-like feel: disable rubber-band effect on iOS header if possible via containers */
-.safe-area-bottom {
-  padding-bottom: env(safe-area-inset-bottom);
-}
-
-/* Scrollbar hiding utilities */
-@layer utilities {
-  .scrollbar-hide::-webkit-scrollbar {
-    display: none;
+@layer components {
+  .section-kicker {
+    color: var(--color-clay);
+    font-size: 0.78rem;
+    font-weight: 700;
+    letter-spacing: 0.28em;
+    margin-bottom: 0.9rem;
+    text-transform: uppercase;
   }
-  .scrollbar-hide {
-    -ms-overflow-style: none;
-    scrollbar-width: none;
+
+  .section-title {
+    font-family: var(--font-serif);
+    font-size: clamp(2.5rem, 4vw, 4.3rem);
+    line-height: 0.98;
+    letter-spacing: 0;
+    max-width: 12ch;
+  }
+
+  .section-copy {
+    color: var(--color-muted);
+    font-size: 1rem;
+    line-height: 1.9;
+    margin-top: 1.25rem;
+    max-width: 40rem;
   }
 }
