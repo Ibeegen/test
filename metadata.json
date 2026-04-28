@@ -1,12 +1,10 @@
 {
-  "name": "3D Character Content Creator",
-  "description": "Transform product images into animated 3D characters with AI-generated prompts and scripts for video content.",
-  "requestFramePermissions": [
-    "camera"
-  ],
+  "name": "MOC Atelier Storefront",
+  "description": "Professional ecommerce storefront for premium furniture and decor, with curated catalog and built-in cart experience.",
+  "requestFramePermissions": [],
   "majorCapabilities": [
-    "Image Analysis",
-    "Creative Writing",
-    "AI Content Workflow"
+    "Ecommerce Catalog",
+    "Shopping Cart",
+    "Responsive Product Showcase"
   ]
 }
